@@ -1,5 +1,6 @@
-#SerpClix Auto Clicker Version 1.0.0
+#SerpClix Auto Clicker Version 1.0.5
 #Functions: Clicks all offer types and completes them except for images (W.I.P) and map offers(auto deletes)
+#Changelogs: BUG FIXES, DELETE ALL MAPS/IMAGES OFFERS, clicks captchas(only the checkmark box ones)
 from pyautogui import *
 import pyautogui
 import time
@@ -29,7 +30,7 @@ pageADownBotX = 1905
 pageADownBotY = 1020
 
 #search ommitted results (scroll all the way down when you see the ommitted results for searches)
-omittedResultsX = 648
+omittedResultsX = 748
 omittedResultsY = 730
 
 #omitted videos     (scroll all the way down for ommitted results for videos)
@@ -90,7 +91,7 @@ redB = 215
 
 #reset page 
 resetPageCheckOrangeX = 599
-resetPageCheckOrangeY = 976
+resetPageCheckOrangeY = 919
 resetOrangeR = 255
 resetOrangeG = 212
 resetOrangeB = 79
@@ -107,6 +108,17 @@ pass6 = ''
 pass7 = ''
 pass8 = ''
 
+#google image button
+imageX =1684
+imageY = 178
+
+#CAPTCHA
+captchaX = 373
+captchaY = 254
+#the captcha blue color, top right most color of the three colors in the symbol
+captchaColorR = 27
+captchaColorG = 60
+captchaColorB = 168
 
 
 
@@ -132,6 +144,7 @@ def pasteSearch():
     pyautogui.hotkey('ctrl','v')
     sleep(1)
     pyautogui.hotkey('enter')
+    captcha()
 
 
 #Moves mouse to down click arrow
@@ -167,13 +180,14 @@ def closeTab():
 
 #delete offer
 def removeOffer():
-    closeTab()
-    sleep(2)
-    pyautogui.moveTo(removeOfferX,removeOfferY)
-    click(removeOfferX, removeOfferY)
-    sleep(1)
-    pyautogui.hotkey('enter')
-    sleep(1)
+    if pyautogui.pixelMatchesColor(clickExtensionIconX, clickExtensionIconY, (orangeR ,orangeG ,orangeB ), tolerance = 20) == False:
+        closeTab()
+        sleep(2)
+        pyautogui.moveTo(removeOfferX,removeOfferY)
+        click(removeOfferX, removeOfferY)
+        sleep(1)
+        pyautogui.hotkey('enter')
+        sleep(1)
 
 
 
@@ -183,6 +197,7 @@ def search():
     sleep(2)
     i = 0
     while (pyautogui.pixelMatchesColor(statusX , statusY , (255,165,0), tolerance = 30) == False):
+        captcha()
         pyautogui.keyDown('n')
         sleep(0.01)
         pyautogui.keyUp('n')
@@ -201,6 +216,7 @@ def vidSearch():
     sleep(2)
     i = 0
     while (pyautogui.pixelMatchesColor(statusX, statusY, (255,165,0), tolerance = 30) == False):
+        captcha()
         pyautogui.keyDown('n')
         sleep(0.01)
         pyautogui.keyUp('n')
@@ -212,7 +228,19 @@ def vidSearch():
             break
         sleep(4)
         pageAUp()    
-
+#image search
+def imageSearch():
+    sleep(2)
+    i = 0
+    while (pyautogui.pixelMatchesColor(statusX, statusY, (255,165,0), tolerance = 30) == False):
+        sleep(2)
+        pyautogui.keyDown('pagedown')
+        sleep(0.01)
+        pyautogui.keyUp('pagedown')        
+        i = i + 1
+        if i == 15:
+            break
+    pageAUp()
 #scans page for pink
 def scan():
     sleep(1)
@@ -220,8 +248,23 @@ def scan():
         pageDown()
 
         
+#scans and clicks the image
+def imageScan():
+    while (pyautogui.pixelMatchesColor(statusX, statusY, (255,165,0), tolerance = 30) == True):
+        im = pyautogui.locateOnScreen('green1.png')
+        center = pyautogui.center(im)
+        click(center.x,center.y)
+    
+#RECAPTCHA
+def captcha():
+    if pyautogui.pixelMatchesColor(captchaX, captchaY, (captchaColorR, captchaColorG, captchaColorB)) == True:
+        click(69,273)
+        sleep(1)
+        print("captcha clicked")
         
+    
 
+        
 # NEED TO MODIFY THE X AND Y HERE ~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!
 # NEED TO MODIFY THE X AND Y HERE ~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!
 # NEED TO MODIFY THE X AND Y HERE ~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -235,12 +278,29 @@ def scan():
 
 #clicks the found link
 def linkClick():
-    for i in range(10):
-        startX = 235
-        startY = 400
-        click(startX, startY)
-        sleep(0.05)
-        startY = startY + 5
+    click(235,400)
+    sleep(0.01)
+    click(235,405)
+    sleep(0.01)
+    click(235,410)
+    sleep(0.01)
+    click(235,415)
+    sleep(0.01)
+    click(235,420)
+    sleep(0.01)
+    click(235,425)
+    sleep(0.01)
+    click(235,430)
+    sleep(0.01)
+    click(235,435)
+    sleep(0.01)
+    click(235,440)
+    sleep(0.01)
+    click(235,445)
+    sleep(0.01)
+    click(235,450)
+    sleep(0.01)
+    
 
 #ADD TO UR PASSWORD TO CLICK MORE LETTERS
 #click and login
@@ -300,13 +360,13 @@ def colorCheck():
             sleep(1)
             
         
-    #check if grey (COMPLETE)
+    #check if grey 
     if pyautogui.pixelMatchesColor(firstTaskX , firstTaskY , (greyRGB ,greyRGB ,greyRGB )):
         print("URL offer clicked. . .")
         clickFirstJob()
         sleep(95)
         
-    #check if green (COMPLETE)
+    #check if green 
     if pyautogui.pixelMatchesColor(firstTaskX , firstTaskY , (greenR, greenG, greenB), tolerance = 20):
         clickFirstJob()
         sleep(1)
@@ -328,7 +388,7 @@ def colorCheck():
         vidSearch()
         sleep(1)
         #scans page
-        if pyautogui.pixelMatchesColor(pageDownX, clickExtensionIconY, (orangeR ,orangeG ,orangeB ), tolerance = 20) == True:
+        if pyautogui.pixelMatchesColor(clickExtensionIconX, clickExtensionIconY, (orangeR ,orangeG ,orangeB ), tolerance = 20) == True:
             #scans page
             scan()
             sleep(1)
@@ -341,6 +401,8 @@ def colorCheck():
             removeOffer()
             sleep(1)
 
+
+
     #check if need to reset page
     if pyautogui.pixelMatchesColor(resetPageCheckOrangeX, resetPageCheckOrangeY, (resetOrangeR, resetOrangeG, resetOrangeB))== True:
         sleep(1)
@@ -348,10 +410,15 @@ def colorCheck():
         print("Login reset")
 
     #checks for image offer
-
-    
+    if pyautogui.pixelMatchesColor(firstTaskX , firstTaskY , (244, 234, 216), tolerance = 5):
+        clickFirstJob()
+        sleep(1)
+        sleep(1)
+        removeOffer()
+        print("Image offer not found. . . Removing. . . ")
+        sleep(1)
 
 x = 0
 while x != 1:
     colorCheck()
-    
+
